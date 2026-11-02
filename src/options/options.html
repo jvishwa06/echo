@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title data-i18n="optTitle">Echo — Options</title>
+    <link rel="stylesheet" href="../styles/common.css" />
+    <style>
+      body { max-width: 44rem; margin: 0 auto; height: auto; padding: 1.5rem; font-size: 14px; }
+      h3 { font-size: 1rem; font-weight: 500; margin: 1.2rem 0 0.2rem; }
+      input[type="text"], input[type="password"] { font: inherit; padding: 0.35rem 0.5rem; border: 1px solid var(--border); border-radius: 0.3rem; width: 100%; background: var(--input-bg); color: var(--text); }
+      /* The key field fills the row and the Show button sits beside it. */
+      .row:has(#apiKey) { flex-wrap: nowrap; }
+      #apiKey { flex: 1; min-width: 0; width: auto; }
+      #toggleKey { flex: none; }
+      .modelgrid {
+        display: grid;
+        grid-template-columns: max-content minmax(0, 24rem);
+        align-items: center;
+        gap: 0.4rem 0.6rem;
+      }
+      #simulModel { width: 100%; max-width: none; }
+      .ok { color: var(--ok); }
+      /* A stand-in for the page behind the subtitles, so the size is judged
+         against a dark video frame rather than against this white page. */
+      #captionPreview {
+        margin-top: 0.5rem; padding: 0.6rem; border-radius: 0.3rem;
+        background: #3c4043; text-align: center; overflow: hidden;
+      }
+      #captionPreview span {
+        display: inline-block; color: #fff; line-height: 1.4;
+        background: rgba(0, 0, 0, 0.72); padding: 0.16em 0.5em;
+        border-radius: 0.25em; text-align: center;
+        font-family: "Google Sans", "Noto Sans", "Noto Sans JP", "Noto Sans SC",
+          "Noto Sans KR", "Noto Sans Devanagari", "Noto Sans Arabic", sans-serif;
+      }
+    </style>
+  </head>
+  <!-- `lang` is set by `localize()` rather than declared: see sidepanel.html. -->
+  <body>
+    <h1 style="font-size: 1.15rem; font-weight: 500; margin: 0" data-i18n="optHeading"></h1>
+
+    <h3 data-i18n="optKeyHeading"></h3>
+    <div class="row">
+      <!-- No format in the placeholder. It said "AIza…" while Google was
+           issuing keys that started that way, and then Google started issuing
+           "AQ.…" ones — at which point the hint was telling people holding the
+           newer key to look for something they did not have. -->
+      <input
+        type="password"
+        id="apiKey"
+        spellcheck="false"
+        autocomplete="off"
+        data-i18n-placeholder="optKeyPlaceholder"
+      />
+      <button id="toggleKey" class="ghost" data-i18n="optShow"></button>
+    </div>
+    <p class="note" id="apiKeyStatus"></p>
+
+    <h3 data-i18n="optSizeHeading"></h3>
+    <div class="row">
+      <input type="range" id="captionSize" min="16" max="64" step="2" />
+      <output id="captionSizeOut"></output>
+    </div>
+    <div id="captionPreview"><span data-i18n="optSizePreview"></span></div>
+
+    <h3 data-i18n="optModelHeading"></h3>
+    <div class="modelgrid">
+      <label class="note" for="simulModel" data-i18n="optModelSimul"></label>
+      <select id="simulModel" class="lang"></select>
+    </div>
+    <p class="note" id="modelStatus"></p>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,179 @@
+{
+  "extName": { "message": "Echo" },
+  "extDescription": {
+    "message": "Hear any tab in your language, spoken and subtitled in real time."
+  },
+
+  "panelTitle": { "message": "Echo" },
+  "statusIdle": { "message": "Idle" },
+  "statusConnecting": { "message": "Connecting…" },
+  "statusConnected": { "message": "Connected" },
+  "statusReconnecting": { "message": "Reconnecting…" },
+  "statusStopped": { "message": "Stopped" },
+  "statusError": { "message": "Error" },
+
+  "panelStepKey": {
+    "message": "A <b>Gemini API key</b> is required to start. Echo translates using your own key - add it in <a1>Options</a1>.",
+    "description": "First of the ordered next-step banners: shown until a key is saved. <a1> opens this extension's Options page."
+  },
+  "panelRunningOn": {
+    "message": "Echo is running on “{1}”, and it runs on one tab at a time. Its controls are on that tab — Stop works from here.",
+    "description": "{1} is the title of the tab the run is on."
+  },
+  "panelRunningElsewhere": {
+    "message": "Echo is running on another tab, and it runs on one tab at a time. Its controls are on that tab — Stop works from here.",
+    "description": "The same as panelRunningOn, for when the tab's title could not be read."
+  },
+
+  "panelThemeDark": { "message": "Switch to dark mode" },
+  "panelThemeLight": { "message": "Switch to light mode" },
+  "panelTabDirection": { "message": "<b>Translate this tab</b>" },
+  "panelInto": {
+    "message": "into",
+    "description": "Reads as a sentence with the language dropdown after it: 'into [Japanese]'."
+  },
+  "panelTabTargetTitle": { "message": "Language you want to hear" },
+  "panelDuckLevel": {
+    "message": "How loud the original stays",
+    "description": "Slider: how loud the tab's own sound stays while the translated voice is speaking over it."
+  },
+  "panelPageSubtitles": { "message": "Subtitles on the page" },
+
+  "panelStart": { "message": "Start" },
+  "panelStop": { "message": "Stop" },
+  "panelOptions": { "message": "Options" },
+
+  "panelUsageFree": {
+    "message": "<b>{1}</b> so far, <b>{2}</b> of total usage. Google charges nothing for this on the free plan.",
+    "description": "{1} is how long the run has been going, {2} the audio it has moved, sent and received added together. Must contain no price: the free tier is charged nothing."
+  },
+  "panelUsageTip": {
+    "message": "Started {1} ago. Since then it has sent {2} of audio to Google and got {3} back, and both are charged for.",
+    "description": "Tooltip on the usage line. {1} elapsed, {2} audio sent, {3} audio received."
+  },
+  "panelUsageTipFree": {
+    "message": "Google charges nothing on the free plan, so there is no cost to show."
+  },
+  "durationSeconds": {
+    "message": "{1}s",
+    "description": "A duration under a minute. {1} is a whole number of seconds."
+  },
+  "durationMinutes": {
+    "message": "{1} min",
+    "description": "A duration of a minute or more, rounded. {1} is a whole number of minutes."
+  },
+
+  "panelMuteSound": { "message": "Mute the translated voice" },
+  "panelUnmuteSound": { "message": "Unmute the translated voice" },
+  "panelMuteOffElsewhere": {
+    "message": "The run is on another tab.",
+    "description": "Why a mute button is greyed out."
+  },
+
+  "panelLangPopular": {
+    "message": "Popular",
+    "description": "Heading for the first group of a language dropdown."
+  },
+  "panelLangAll": { "message": "All languages" },
+  "panelHeard": {
+    "message": "heard",
+    "description": "Tag on a transcript line carrying what was said."
+  },
+  "panelTranslated": {
+    "message": "translation",
+    "description": "Tag on a transcript line carrying the translation."
+  },
+  "panelCaptionsUnavailable": { "message": "Subtitles can't be shown on this page." },
+  "panelCaptionsStopped": { "message": "Subtitles stopped reaching this page." },
+
+  "optTitle": { "message": "Echo — Options" },
+  "optHeading": { "message": "Echo options" },
+
+  "optKeyHeading": { "message": "Gemini API key" },
+  "optKeyPlaceholder": {
+    "message": "Paste your key here",
+    "description": "Deliberately names no key format: Google has issued two, and a hint for one tells holders of the other to look for something they do not have."
+  },
+  "optShow": { "message": "Show" },
+  "optHide": { "message": "Hide" },
+  "optKeyStray": { "message": "Saved, but that does not look like a key. Did something else get pasted in?" },
+  "optKeyShort": { "message": "Saved, but that looks too short — is some of the key missing?" },
+
+  "optSizeHeading": { "message": "Subtitle size" },
+  "optSizePx": { "message": "{1} px", "description": "{1} is a number of pixels." },
+  "optSizePreview": {
+    "message": "Hello, how are you today? - नमस्ते, आज आप कैसे हैं?",
+    "description": "Sample text under the size slider. Shows a Latin and a non-Latin script together, since the two set at different heights."
+  },
+
+  "optModelHeading": { "message": "Model selection" },
+  "optModelSimul": { "message": "Tab audio, and simultaneous mode" },
+  "optModelNoKey": { "message": "Add your API key above to see the models it can use." },
+  "optModelLoading": { "message": "Loading the models this key can use…" },
+  "optModelLoadFailed": {
+    "message": "Could not load the model list: {1}",
+    "description": "{1} is the error message from Google."
+  },
+  "optModelNone": { "message": "This key has no live translation models available." },
+  "optModelSaved": { "message": "Saved. Applies the next time you press Start." },
+
+  "errNoKey": {
+    "message": "No Gemini API key yet. Open Options and paste one from aistudio.google.com/apikey."
+  },
+  "errPreflightNoKey": { "message": "No Gemini API key. Add one in Options." },
+  "errKeyRejected": {
+    "message": "Gemini rejected that API key. Check it on the Options page, or make a new one at aistudio.google.com/apikey."
+  },
+  "errQuota": {
+    "message": "That key has used up what Google allows for now. Wait for the limit to reset and press Start again, or add a payment method to move off the free plan — the free one runs out first."
+  },
+  "errModelGone": {
+    "message": "Google has withdrawn the translation model this version uses, and none of the alternatives worked. Update Echo and try again."
+  },
+  "errKeyForbidden": {
+    "message": "That key is not allowed to use the Gemini API. If you restricted the key, check that Gemini is still on its list — or make a new key at aistudio.google.com/apikey."
+  },
+  "errAlreadyRunningOn": {
+    "message": "Echo is already running on “{1}”, and it runs on one tab at a time. Press Stop first — the Stop button works from any tab.",
+    "description": "{1} is the title of the tab the run is on."
+  },
+  "errAlreadyRunningElsewhere": {
+    "message": "Echo is already running on another tab, and it runs on one tab at a time. Press Stop first — the Stop button works from any tab."
+  },
+  "errNoTab": { "message": "There is no tab to listen to." },
+  "errClickIcon": {
+    "message": "Click the Echo toolbar icon on the tab you want to translate, then press Start again. ({1})",
+    "description": "{1} is Chrome's own error text, which is not translated."
+  },
+  "errNoStreamId": { "message": "Chrome did not hand over this tab's audio. Press Start again." },
+  "errUnknownMessage": { "message": "Something went wrong inside Echo ({1})." },
+
+  "captionsChromePage": {
+    "message": "Chrome's own pages can't take them. Open a website and click the toolbar icon there."
+  },
+  "captionsClickIcon": { "message": "Click the toolbar icon on that page." },
+  "captionsOpenSite": { "message": "Open a website and click the toolbar icon there." },
+
+  "closeReasonGiven": {
+    "message": "Gemini closed the connection: {1}",
+    "description": "{1} is the server's own reason, which arrives in English and is not translated."
+  },
+  "closeReasonOpaqueHint": {
+    "message": "Could not reach Gemini, and a browser is never told why. {1}",
+    "description": "{1} is hintKeyAccepted."
+  },
+  "closeReasonOpaque": {
+    "message": "Could not reach Gemini, and a browser is never told why. It is usually the key: missing, refused, or over its limit — which the free plan reaches first."
+  },
+  "closeReasonCode": { "message": "Gemini closed the connection (code {1})." },
+  "closeBeforeReady": { "message": "The session was closed before it was ready." },
+  "hintKeyAccepted": {
+    "message": "Your key worked a moment ago, so this is Gemini or your network rather than the key."
+  },
+  "loopGaveUp": {
+    "message": "{1} Echo stopped trying after {2} attempts in a row. Check your key on the Options page, and how much you have left in Google AI Studio — the free plan does not allow much. Press Start to try again.",
+    "description": "{1} is whichever failure message came last; {2} is a number of attempts."
+  },
+  "loopDropping": { "message": "The connection to Gemini keeps dropping." }
+
+}

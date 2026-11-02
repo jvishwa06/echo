@@ -1,0 +1,236 @@
+/* Every colour is a variable, so dark mode is one block of overrides.
+   `data-theme` on <html> is set by lib/theme.js. */
+:root {
+  color-scheme: light;
+  --primary: #4285f4;
+  --bg: #ffffff;
+  --text: #202124;
+  --border: #e0e0e0;
+  --input-bg: #f8f9fa;
+  --muted: #5f6368;
+  --agent-bubble: #f1f3f4;
+  --error-bg: #fce8e6;
+  --error-text: #c5221f;
+  --error-border: #f3b4b0;
+  --info-bg: #e8f0fe;
+  --info-text: #174ea6;
+  --warn: #b06000;
+  --ok: #188038;
+  --stop: #ea4335;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #202124;
+  --text: #e8eaed;
+  --border: #3c4043;
+  --input-bg: #303134;
+  --muted: #9aa0a6;
+  --agent-bubble: #303134;
+  --error-bg: #5c2b29;
+  --error-text: #f6aea9;
+  --error-border: #8c3b36;
+  --info-bg: #1f3556;
+  --info-text: #aecbfa;
+  --warn: #fcad70;
+  --ok: #81c995;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0.75rem;
+  /* The Noto faces are named per script rather than left to one fallback: the
+     ten UI locales cover Latin, CJK, Devanagari and Arabic, and a box that
+     picks a Latin face first renders Hindi and Arabic in whatever the system
+     substitutes. Absent faces cost nothing — the list falls through. */
+  font-family: "Google Sans", "Noto Sans", "Noto Sans JP", "Noto Sans SC",
+    "Noto Sans KR", "Noto Sans Devanagari", "Noto Sans Arabic", system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  height: 100vh;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+header h1 { font-size: 1rem; margin: 0; font-weight: 500; }
+header .end { display: flex; align-items: center; gap: 0.5rem; }
+
+/* The light/dark switch: a moon in light mode, a sun in dark mode, each showing
+   what a click switches to. */
+#themeToggle { padding: 0.25rem; }
+#themeToggle svg { width: 16px; height: 16px; }
+#themeToggle .sun { display: none; }
+:root[data-theme="dark"] #themeToggle .sun { display: block; }
+:root[data-theme="dark"] #themeToggle .moon { display: none; }
+
+.status { display: flex; align-items: center; gap: 0.35rem; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #34a853; }
+.dot.connecting { background: #fbbc04; }
+.dot.disconnected { background: #ea4335; }
+
+.banner {
+  padding: 0.5rem 0.6rem;
+  border-radius: 0.35rem;
+  line-height: 1.4;
+}
+.banner.error { background: var(--error-bg); color: var(--error-text); }
+/* The plain banners are statements of fact, not failures — the one-time setup
+   prompt and "the run is on another tab" — so they stay informational and a
+   fresh install does not open on a wall of red. */
+#keyNeeded, #elsewhereNote { background: var(--info-bg); color: var(--info-text); font-size: 12px; }
+#keyNeeded a { color: inherit; }
+
+.direction {
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.row { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+/* The same trap as `.note.usage` below: a row that starts hidden would show
+   itself anyway, because this `display` outranks what [hidden] gives it. */
+.row[hidden] { display: none; }
+.row.heading { font-weight: 400; }
+/* Logical, not physical: in Arabic the indent is on the right. Same for the `output` below. */
+.row.indent { padding-inline-start: 1.35rem; }
+.row.buttons { gap: 0.5rem; }
+.inline { display: flex; align-items: center; gap: 0.3rem; }
+/* A checkbox greyed out on its own is a box that looks unticked rather than
+   unavailable. The words beside it have to go with it. */
+.inline:has(input:disabled) { opacity: 0.5; }
+.grow { flex: 1; }
+.small, .note { color: var(--muted); }
+.note { margin: 0; line-height: 1.45; font-size: 12px; }
+/* Subtitles failing is not an error — the translation is still running and the
+   transcript is still here — so it is not given the red banner. */
+.note.warn { color: var(--warn); }
+
+/* The cost figure is a meter reading, so it is drawn as one. The dial is what
+   the eye lands on, the amount is the only part in the panel's own ink, and the
+   sentence after it stays the grey of every other note. */
+.note.usage { display: flex; align-items: flex-start; gap: 0.4rem; }
+/* `display` from a class beats the `display: none` the browser gives [hidden],
+   so a flex note has to say this or it shows itself with no figure in it. */
+.note.usage[hidden] { display: none; }
+.note.usage svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.note.usage b { color: var(--text); }
+
+select.lang, input[type="range"] {
+  font: inherit;
+  background: var(--input-bg);
+  color: var(--text);
+}
+select.lang {
+  border: 1px solid var(--border);
+  border-radius: 0.3rem;
+  padding: 0.2rem 0.3rem;
+}
+/* The panel can be dragged as narrow as the user likes. */
+select.lang { max-width: 11rem; }
+input[type="range"] { flex: 1; min-width: 4rem; }
+output { min-width: 2.4rem; text-align: end; }
+
+button {
+  font: inherit;
+  border-radius: 0.3rem;
+  padding: 0.45rem 1.1rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+button.primary { background: var(--primary); color: #fff; }
+button.primary.running { background: var(--stop); }
+button.ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+button:disabled { opacity: 0.5; cursor: default; }
+
+/* Square, so the two of them read as a pair of switches next to Start rather
+   than as two more things to press. */
+button.icon {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+  padding: 0.35rem;
+  line-height: 0;
+}
+button.icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+button.icon .slash { display: none; }
+/* Off is the state worth noticing — muted translation looks exactly like a
+   broken one — so it is the loud one, and it carries the slash. */
+button.icon.off { background: var(--error-bg); border-color: var(--error-border); color: var(--error-text); }
+button.icon.off .slash { display: inline; }
+
+/* The line under the buttons, and the transcript below it, scrolling as one
+   region. */
+#below {
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+#transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.line {
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.5rem;
+  line-height: 1.45;
+  max-width: 95%;
+  overflow-wrap: anywhere;
+}
+/* Heard on one side, spoken on the other — the same asymmetry the web app uses
+   to make direction readable at a glance. Which side is which follows the
+   locale: in a column flex box the cross axis is the inline one, so `flex-start`
+   is already the right edge under `dir="rtl"` and neither rule needs a variant. */
+.line.input { background: var(--agent-bubble); color: var(--muted); align-self: flex-start; }
+.line.output { background: var(--primary); color: #fff; align-self: flex-end; }
+.line .tag {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+/* Arabic has no case for `uppercase` to change and is cursive, so the tracking
+   that makes a Latin tag read as a label just pulls its letters apart. */
+[dir="rtl"] .line .tag { text-transform: none; letter-spacing: normal; }
+/* Block, so the `dir="auto"` sidepanel.js puts on it also decides which edge a
+   wrapped line is aligned to. On an inline it would order the glyphs correctly
+   and still align the paragraph the interface's way. */
+.line .body { display: block; }

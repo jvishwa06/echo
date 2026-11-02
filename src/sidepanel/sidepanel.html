@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title data-i18n="panelTitle">Echo</title>
+    <link rel="stylesheet" href="../styles/common.css" />
+  </head>
+  <!-- No `lang` on <html>: this document is whichever locale Chrome resolved,
+       and a hardcoded one would have a screen reader read Japanese aloud with
+       English pronunciation. `localize()` sets it from the UI language before
+       the first paint, along with every `data-i18n` below. -->
+  <body>
+    <header>
+      <h1>Echo</h1>
+      <div class="end">
+        <div class="status">
+          <span id="statusDot" class="dot disconnected"></span>
+          <span id="statusText" data-i18n="statusIdle"></span>
+        </div>
+        <button id="themeToggle" class="icon" type="button">
+          <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+          </svg>
+          <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="error" class="banner error" hidden></div>
+
+    <!-- Shown until an API key is saved: Start is disabled without one. -->
+    <div id="keyNeeded" class="banner" hidden data-i18n="panelStepKey" data-link1="options"></div>
+
+    <!-- One engine, one run, one tab — and the toolbar icon opens this panel
+         anywhere, so this is the panel a bystander tab gets: what is running,
+         where, and a Stop button that still works. -->
+    <div id="elsewhereNote" class="banner" hidden></div>
+
+    <section class="direction">
+      <div class="row heading">
+        <span data-i18n="panelTabDirection"></span>
+      </div>
+      <div class="row indent">
+        <span class="small" data-i18n="panelInto"></span>
+        <select id="tabTarget" class="lang" data-i18n-title="panelTabTargetTitle"></select>
+      </div>
+      <div class="row indent">
+        <label class="inline grow">
+          <span data-i18n="panelDuckLevel"></span>
+          <input type="range" id="duckLevel" min="0" max="100" step="5" />
+          <output id="duckLevelOut"></output>
+        </label>
+      </div>
+      <div class="row indent">
+        <label class="inline">
+          <input type="checkbox" id="tabCaptions" />
+          <span data-i18n="panelPageSubtitles"></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="row buttons">
+      <button id="toggle" class="primary" data-i18n="panelStart"></button>
+      <!-- Drawn here rather than loaded, like every other asset in this
+           extension: an inline path costs less than a file, and there is no
+           request for anything to block on. The slash is a sibling of the glyph
+           and shown by CSS when the button is off, so the muted icon cannot
+           drift out of step with the one it crosses out. -->
+      <button id="soundMute" class="icon" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4z" />
+          <path d="M17 9.5a4 4 0 0 1 0 5" />
+          <path class="slash" d="M3 3l18 18" />
+        </svg>
+      </button>
+      <button
+        id="openOptions"
+        class="ghost"
+        data-i18n="panelOptions"
+        data-i18n-title="panelOptions"
+      ></button>
+    </section>
+
+    <!-- What the run has spent so far, once the server has said.
+
+         Two numbers and a dial. The dial says "meter" before the sentence is
+         read, and the sentence is the only part that has to be read: the token
+         count was an answer to a question nobody was asking of a line this
+         size. How long the run has been going
+         earns its place because the dollars do not always mean anything — on
+         the free tier they mean nothing at all, and the time is the only part
+         of this line that is measured rather than estimated. The disclaimer
+         rides in the message rather than in the title attribute, because a
+         figure in dollars reads as a bill unless it says otherwise and nobody
+         hovers.
+
+         Two tails, one clock. The dollars are shown only to a key that is
+         actually being charged — Options → Gemini API plan is where that is
+         declared, because nothing in an API response says — and the free tail
+         counts the audio instead, which is what the free tier's limits are
+         spent on and what predicts the run failing. Which of the two is used is
+         the only choice `renderUsage` makes: both are whole sentences in the
+         catalogue, so no code path can assemble one without its disclaimer. -->
+    <p class="note usage" id="usageNote" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3.5 18a9 9 0 1 1 17 0" />
+        <path d="M12 18l4.7-5.2" />
+      </svg>
+      <span id="usageText"></span>
+    </p>
+
+    <p class="note warn" id="captionNote" hidden></p>
+
+    <!-- Everything under the controls scrolls as one. -->
+    <div id="below">
+      <div id="transcript"></div>
+    </div>
+
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+# Build output
+echo.zip
+*.zip
+
+# Dependencies
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.crx
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

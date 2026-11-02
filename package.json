@@ -1,0 +1,10 @@
+{
+  "name": "echo",
+  "version": "1.0.4",
+  "private": true,
+  "type": "module",
+  "description": "Chrome extension that interprets tab audio in real time via the Gemini Live API.",
+  "scripts": {
+    "package": "rm -f echo.zip && zip -r echo.zip manifest.json LICENSE PRIVACY.md _locales assets src -x '.*'"
+  }
+}

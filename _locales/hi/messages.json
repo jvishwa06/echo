@@ -1,0 +1,134 @@
+{
+  "extName": { "message": "Echo" },
+  "extDescription": {
+    "message": "किसी भी टैब को अपनी भाषा में सुनें — रीयल टाइम में बोला हुआ और सबटाइटल के साथ।"
+  },
+
+  "panelTitle": { "message": "Echo" },
+  "statusIdle": { "message": "निष्क्रिय" },
+  "statusConnecting": { "message": "जुड़ रहा है…" },
+  "statusConnected": { "message": "जुड़ गया" },
+  "statusReconnecting": { "message": "फिर से जुड़ रहा है…" },
+  "statusStopped": { "message": "रुका हुआ" },
+  "statusError": { "message": "त्रुटि" },
+
+  "panelStepKey": {
+    "message": "शुरू करने के लिए <b>Gemini API कुंजी</b> ज़रूरी है। Echo आपकी अपनी कुंजी से अनुवाद करता है - इसे <a1>विकल्प</a1> में जोड़ें।"
+  },
+  "panelRunningOn": {
+    "message": "Echo “{1}” पर चल रहा है, और यह एक बार में एक ही टैब पर चलता है। इसके नियंत्रण उसी टैब पर हैं — Stop यहाँ से भी काम करता है।"
+  },
+  "panelRunningElsewhere": {
+    "message": "Echo किसी दूसरे टैब पर चल रहा है, और यह एक बार में एक ही टैब पर चलता है। इसके नियंत्रण उसी टैब पर हैं — Stop यहाँ से भी काम करता है।"
+  },
+
+  "panelThemeDark": { "message": "डार्क मोड पर जाएँ" },
+  "panelThemeLight": { "message": "लाइट मोड पर जाएँ" },
+  "panelTabDirection": { "message": "<b>इस टैब का अनुवाद करें</b>" },
+  "panelInto": { "message": "इस भाषा में" },
+  "panelTabTargetTitle": { "message": "वह भाषा जिसमें आप सुनना चाहते हैं" },
+  "panelDuckLevel": { "message": "मूल आवाज़ कितनी बनी रहे" },
+  "panelPageSubtitles": { "message": "पेज पर सबटाइटल" },
+
+  "panelStart": { "message": "Start" },
+  "panelStop": { "message": "Stop" },
+  "panelOptions": { "message": "विकल्प" },
+
+  "panelUsageFree": {
+    "message": "अब तक <b>{1}</b>, कुल उपयोग <b>{2}</b>। मुफ़्त प्लान में इसका कोई शुल्क नहीं लगता।"
+  },
+  "panelUsageTip": {
+    "message": "{1} पहले शुरू हुआ। तब से {2} ऑडियो Google को भेजा और {3} वापस मिला, और दोनों पर शुल्क लगता है।"
+  },
+  "panelUsageTipFree": {
+    "message": "मुफ़्त योजना में Google कुछ नहीं लेता, इसलिए दिखाने को कोई राशि नहीं है।"
+  },
+  "durationSeconds": { "message": "{1} से." },
+  "durationMinutes": { "message": "{1} मि." },
+
+  "panelMuteSound": { "message": "अनुवाद की आवाज़ म्यूट करें" },
+  "panelUnmuteSound": { "message": "अनुवाद की आवाज़ अनम्यूट करें" },
+  "panelMuteOffElsewhere": { "message": "रन किसी दूसरे टैब पर है।" },
+
+  "panelLangPopular": { "message": "प्रचलित" },
+  "panelLangAll": { "message": "सभी भाषाएँ" },
+  "panelHeard": { "message": "सुना गया" },
+  "panelTranslated": { "message": "अनुवाद" },
+  "panelCaptionsUnavailable": { "message": "इस पेज पर सबटाइटल नहीं दिखाए जा सकते।" },
+  "panelCaptionsStopped": { "message": "सबटाइटल अब इस पेज तक नहीं पहुँच रहे।" },
+
+  "optTitle": { "message": "Echo — विकल्प" },
+  "optHeading": { "message": "Echo के विकल्प" },
+
+  "optKeyHeading": { "message": "Gemini API कुंजी" },
+  "optKeyPlaceholder": { "message": "अपनी कुंजी यहाँ चिपकाएँ" },
+  "optShow": { "message": "दिखाएँ" },
+  "optHide": { "message": "छिपाएँ" },
+  "optKeyStray": { "message": "सहेज लिया, पर यह कुंजी नहीं लगती। कहीं कुछ और तो नहीं चिपक गया?" },
+  "optKeyShort": { "message": "सहेज लिया, पर यह बहुत छोटा लगता है — कुंजी का कुछ हिस्सा छूट तो नहीं गया?" },
+
+  "optSizeHeading": { "message": "सबटाइटल का आकार" },
+  "optSizePx": { "message": "{1} px" },
+  "optSizePreview": { "message": "नमस्ते, आज आप कैसे हैं? - Hello, how are you today?" },
+
+  "optModelHeading": { "message": "मॉडल चयन" },
+  "optModelSimul": { "message": "टैब ऑडियो, और माइक का simultaneous मोड" },
+  "optModelNoKey": { "message": "इस्तेमाल हो सकने वाले मॉडल देखने के लिए ऊपर अपनी API कुंजी जोड़ें।" },
+  "optModelLoading": { "message": "इस कुंजी के मॉडल लोड हो रहे हैं…" },
+  "optModelLoadFailed": { "message": "मॉडल सूची लोड नहीं हो सकी: {1}" },
+  "optModelNone": { "message": "इस कुंजी के लिए कोई लाइव अनुवाद मॉडल उपलब्ध नहीं है।" },
+  "optModelSaved": { "message": "सहेज लिया। अगली बार Start दबाने पर लागू होगा।" },
+
+  "errNoKey": {
+    "message": "अभी कोई Gemini API कुंजी नहीं है। विकल्प खोलें और aistudio.google.com/apikey से एक कुंजी चिपकाएँ।"
+  },
+  "errPreflightNoKey": { "message": "कोई Gemini API कुंजी नहीं। विकल्प में एक जोड़ें।" },
+  "errKeyRejected": {
+    "message": "Gemini ने वह API कुंजी अस्वीकार कर दी। विकल्प पृष्ठ पर उसे जाँचें, या aistudio.google.com/apikey पर नई बनाएँ।"
+  },
+  "errQuota": {
+    "message": "इस कुंजी ने फ़िलहाल Google की दी हुई सीमा पूरी कर ली है। सीमा दोबारा खुलने का इंतज़ार करके Start दबाइए, या भुगतान का तरीक़ा जोड़कर मुफ़्त योजना से आगे बढ़िए — सीमा सबसे पहले मुफ़्त योजना में ही ख़त्म होती है।"
+  },
+  "errModelGone": {
+    "message": "इस वर्शन का अनुवाद मॉडल Google ने बंद कर दिया है, और कोई विकल्प भी काम नहीं आया। Echo अपडेट करके दोबारा कोशिश करें।"
+  },
+  "errKeyForbidden": {
+    "message": "यह कुंजी Gemini API इस्तेमाल नहीं कर सकती। अगर आपने कुंजी पर पाबंदी लगाई है तो देखिए कि Gemini उसकी सूची में अब भी है या नहीं — या aistudio.google.com/apikey पर नई कुंजी बना लीजिए।"
+  },
+  "errAlreadyRunningOn": {
+    "message": "Echo पहले से “{1}” पर चल रहा है, और यह एक बार में एक ही टैब पर चलता है। पहले Stop दबाएँ — Stop बटन किसी भी टैब से काम करता है।"
+  },
+  "errAlreadyRunningElsewhere": {
+    "message": "Echo पहले से किसी दूसरे टैब पर चल रहा है, और यह एक बार में एक ही टैब पर चलता है। पहले Stop दबाएँ — Stop बटन किसी भी टैब से काम करता है।"
+  },
+  "errNoTab": { "message": "सुनने के लिए कोई टैब नहीं है।" },
+  "errClickIcon": {
+    "message": "जिस टैब का अनुवाद करना है उस पर टूलबार का Echo आइकन क्लिक करें, फिर दोबारा Start दबाएँ। ({1})"
+  },
+  "errNoStreamId": { "message": "Chrome ने इस टैब की आवाज़ नहीं सौंपी। एक बार फिर Start दबाइए।" },
+  "errUnknownMessage": { "message": "Echo के भीतर कुछ गड़बड़ हो गई ({1})।" },
+
+  "captionsChromePage": {
+    "message": "Chrome के अपने पृष्ठ इन्हें नहीं ले सकते। कोई वेबसाइट खोलें और वहाँ टूलबार का आइकन क्लिक करें।"
+  },
+  "captionsClickIcon": { "message": "उस पृष्ठ पर टूलबार का आइकन क्लिक करें।" },
+  "captionsOpenSite": { "message": "कोई वेबसाइट खोलें और वहाँ टूलबार का आइकन क्लिक करें।" },
+
+  "closeReasonGiven": { "message": "Gemini ने कनेक्शन बंद कर दिया: {1}" },
+  "closeReasonOpaqueHint": {
+    "message": "Gemini तक पहुँचा नहीं जा सका, और ब्राउज़र को कारण कभी नहीं बताया जाता। {1}"
+  },
+  "closeReasonOpaque": {
+    "message": "Gemini तक पहुँचा नहीं जा सका, और ब्राउज़र को कारण कभी नहीं बताया जाता। आम तौर पर बात कुंजी की होती है: है ही नहीं, ठुकरा दी गई, या सीमा पार — और सीमा सबसे पहले मुफ़्त योजना में आती है।"
+  },
+  "closeReasonCode": { "message": "Gemini ने कनेक्शन बंद कर दिया (कोड {1})।" },
+  "closeBeforeReady": { "message": "सेशन तैयार होने से पहले ही बंद हो गया।" },
+  "hintKeyAccepted": {
+    "message": "आपकी कुंजी अभी थोड़ी देर पहले चल रही थी, तो मामला Gemini या आपके नेटवर्क का है, कुंजी का नहीं।"
+  },
+  "loopGaveUp": {
+    "message": "{1} लगातार {2} कोशिशों के बाद Echo ने कोशिश करना छोड़ दिया। विकल्प पृष्ठ पर अपनी कुंजी देखिए, और Google AI Studio में देखिए कि कितना बचा है — मुफ़्त योजना में ज़्यादा नहीं मिलता। दोबारा कोशिश के लिए Start दबाइए।"
+  },
+  "loopDropping": { "message": "Gemini से कनेक्शन बार-बार टूट रहा है।" }
+
+}

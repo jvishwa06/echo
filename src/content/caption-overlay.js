@@ -1,0 +1,252 @@
+/**
+ * Subtitles painted over whatever page is being translated.
+ *
+ * A rolling three-line overlay, built to live inside someone else's document:
+ *
+ * - Everything is in a shadow root, so the page's stylesheet cannot restyle
+ *   the captions and ours cannot leak into the page.
+ * - Going fullscreen on a video puts that element alone on screen and hides
+ *   the rest of the document, so the host element has to be re-parented into
+ *   `document.fullscreenElement` when that happens, and back out afterwards.
+ *
+ * Injected on demand with `chrome.scripting.executeScript` under `activeTab`,
+ * so the extension needs no host permission for the sites it captions. That
+ * also means it can be injected twice, and the second injection has to replace
+ * the first rather than either duplicating it or standing down — see the marker
+ * below.
+ *
+ * Every length in the stylesheet is in `px` or `em`, never `rem`. `all: initial`
+ * on the host does not make `rem` safe: it still resolves against the *page's*
+ * `<html>` font size, so a site that sets `html { font-size: 62.5% }` — a common
+ * trick, and the reason the subtitles read as too small on some pages and not
+ * others — shrinks the captions by a third. `em` inside the overlay is fine,
+ * because it cascades from the size set here.
+ */
+
+(() => {
+  const MARK = "__liveTranslatorCaptions";
+  const HOST_ID = "live-translator-captions";
+
+  /**
+   * Replace any previous instance instead of standing down in front of it.
+   *
+   * This used to be `if (window[MARK]) return`, which is wrong in the one case
+   * that happens constantly: reloading the extension. A reload orphans the
+   * content script in every page it was injected into — the marker and the
+   * overlay stay in the page, but the script's link back to the extension is
+   * severed, so it will never be handed another transcript. Bailing out on the
+   * marker meant the fresh injection stood down in favour of a corpse, and the
+   * tab produced no subtitles at all for the rest of its life, however many
+   * times Start was pressed. Nothing surfaced: the sends succeed, and the side
+   * panel transcript keeps filling, so it reads as a caption bug rather than an
+   * injection one.
+   *
+   * The same replacement covers the ordinary double injection, at the cost of
+   * whatever line was on screen at that moment.
+   */
+  try {
+    window[MARK]?.teardown?.();
+  } catch {
+    // An orphan throws partway through its own teardown — `chrome.runtime` is
+    // gone with the context that owned it. Its listeners died with that
+    // context, so there is nothing left to unregister; only the overlay it
+    // left in the DOM matters, and that is dealt with next.
+  }
+  document.getElementById(HOST_ID)?.remove();
+
+  const MAX_LINES = 3;
+  const FADE_DELAY_MS = 8000;
+
+  // Kept in step with DEFAULTS.captionSize and the bounds in lib/settings.js by
+  // tests/captions.test.js. They cannot be imported: this file is injected as a
+  // classic script, not a module, so it has no way to reach lib/.
+  const DEFAULT_SIZE_PX = 32;
+  const MIN_SIZE_PX = 16;
+  const MAX_SIZE_PX = 64;
+
+  const host = document.createElement("div");
+  host.id = HOST_ID;
+  // The page's own stacking contexts routinely go into the millions.
+  host.style.cssText =
+    "position:fixed;inset:auto 0 0 0;z-index:2147483647;pointer-events:none;";
+  const root = host.attachShadow({ mode: "closed" });
+  root.innerHTML = `
+    <style>
+      :host { all: initial; --max-rows: 3; --caption-size: 32px; }
+      #lines {
+        display: flex; flex-direction: column; align-items: center;
+        gap: 0.25em; padding: 0 32px 40px; pointer-events: none;
+        font-family: "Google Sans", "Noto Sans", "Noto Sans JP", "Noto Sans SC",
+          "Noto Sans KR", "Noto Sans Devanagari", "Noto Sans Arabic", sans-serif;
+        /* Set once here so everything below can size itself in em. */
+        font-size: var(--caption-size);
+      }
+      .line {
+        line-height: 1.4; color: #fff;
+        background: rgba(0, 0, 0, 0.72);
+        padding: 0.16em 0.5em; border-radius: 0.25em;
+        max-width: 90%; text-align: center; word-wrap: break-word;
+        animation: line-in 0.25s ease-out;
+        /* A single sentence still has to fit on someone's video. The cap is on
+           wrapped rows, not on characters, and the text is bottom-aligned so
+           what overflows is the part already read — the newest words stay on
+           screen. Hiding the overflow is what turns it into a clip. */
+        display: flex; align-items: flex-end; overflow: hidden;
+        max-height: calc(var(--max-rows) * 1.4em);
+      }
+      /* One flex item, so the clip above applies to the wrapped block as a
+         whole rather than to a bare text node and the dot separately. */
+      .text { flex: 1 1 auto; min-width: 0; }
+      .line.fade-out { animation: line-out 0.8s ease-in forwards; }
+      .dot {
+        display: inline-block; width: 0.3em; height: 0.3em;
+        background: rgba(255, 255, 255, 0.7); border-radius: 50%;
+        margin-inline-start: 0.2em; vertical-align: middle;
+        animation: blink 0.8s infinite;
+      }
+      @keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: 0.2 } }
+      @keyframes line-in { from { opacity: 0; transform: translateY(0.3em) } to { opacity: 1; transform: none } }
+      @keyframes line-out { from { opacity: 1 } to { opacity: 0 } }
+    </style>
+    <div id="lines"></div>
+  `;
+  const linesEl = root.getElementById("lines");
+  document.documentElement.appendChild(host);
+
+  /**
+   * Follow the size chosen in Options, now and whenever it changes.
+   *
+   * Read straight from storage rather than passed in with the transcripts: the
+   * overlay is injected once at Start and the size is adjusted by eye against
+   * the video it is sitting on, so it has to take effect while a session is
+   * running. Listening to the store gets that for the price of the read.
+   */
+  function applySize(px) {
+    const size = Number(px);
+    if (!Number.isFinite(size)) return;
+    const clamped = Math.min(MAX_SIZE_PX, Math.max(MIN_SIZE_PX, Math.round(size)));
+    host.style.setProperty("--caption-size", `${clamped}px`);
+  }
+  chrome.storage.local.get("captionSize").then(({ captionSize = DEFAULT_SIZE_PX }) => {
+    applySize(captionSize);
+  });
+  function onStorageChanged(changes, area) {
+    if (area === "local" && changes.captionSize) applySize(changes.captionSize.newValue);
+  }
+  chrome.storage.onChanged.addListener(onStorageChanged);
+
+  // The line currently being extended, keyed by direction ("tab").
+  const openLines = new Map();
+
+  function addLine(direction, text, partial) {
+    const div = document.createElement("div");
+    div.className = `line ${direction}`;
+    const span = document.createElement("span");
+    span.className = "text";
+    // A subtitle is in the target language, which the page has no say in and
+    // the extension's own locale has nothing to do with — Arabic, Hebrew, Urdu
+    // and Persian are all on the list. Taken from the text rather than declared.
+    span.dir = "auto";
+    div.appendChild(span);
+    linesEl.appendChild(div);
+    openLines.set(direction, div);
+    while (linesEl.children.length > MAX_LINES) {
+      const dropped = linesEl.firstChild;
+      linesEl.removeChild(dropped);
+      for (const [key, line] of openLines) if (line === dropped) openLines.delete(key);
+    }
+    setText(div, text, partial);
+    if (!partial) scheduleFade(div);
+  }
+
+  function updateLine(direction, text, partial) {
+    const line = openLines.get(direction);
+    if (!line) return addLine(direction, text, partial);
+    setText(line, text, partial);
+    if (!partial) scheduleFade(line);
+  }
+
+  function setText(line, text, partial) {
+    const span = line.querySelector(".text");
+    span.textContent = text;
+    if (partial) span.appendChild(dot());
+  }
+
+  function dot() {
+    const d = document.createElement("span");
+    d.className = "dot";
+    return d;
+  }
+
+  /**
+   * Take the subtitles off the page, now, without waiting for a
+   * fade that may never be scheduled.
+   *
+   * A line only starts its eight seconds when its sentence ends. Turning the
+   * switch off mid-sentence leaves a line that has no end coming — the offscreen
+   * document has stopped forwarding, so the `turnComplete` that would have
+   * finalised it never arrives — and it sits on the page with its dot blinking
+   * for the rest of the run.
+   */
+  function clear(direction) {
+    // The direction is also the line's class name and it arrives in a message,
+    // so it is checked against the one that exists rather than interpolated.
+    if (direction !== "tab") return;
+    for (const line of [...linesEl.children]) {
+      if (line.classList.contains(direction)) line.remove();
+    }
+    openLines.delete(direction);
+  }
+
+  function finalize(direction) {
+    const line = openLines.get(direction);
+    if (line) {
+      line.querySelector(".dot")?.remove();
+      scheduleFade(line);
+    }
+    openLines.delete(direction);
+  }
+
+  function scheduleFade(el) {
+    setTimeout(() => {
+      el.classList.add("fade-out");
+      el.addEventListener("animationend", () => el.remove());
+    }, FADE_DELAY_MS);
+  }
+
+  // Ordered so that an orphan running this gets as far as possible before the
+  // first `chrome.*` call throws: the marker and the overlay are what a
+  // replacement instance cares about, the listeners are already dead.
+  function teardown() {
+    delete window[MARK];
+    host.remove();
+    document.removeEventListener("fullscreenchange", onFullscreenChange);
+    chrome.runtime.onMessage.removeListener(onMessage);
+    chrome.storage.onChanged.removeListener(onStorageChanged);
+  }
+
+  // Only the fullscreen element and its descendants are rendered, so a caption
+  // parented to <html> vanishes the moment a video is made fullscreen.
+  function onFullscreenChange() {
+    (document.fullscreenElement || document.documentElement).appendChild(host);
+  }
+  document.addEventListener("fullscreenchange", onFullscreenChange);
+
+  function onMessage(msg) {
+    if (msg?.target !== "captions") return;
+    if (msg.type === "teardown" || (msg.type === "state" && msg.running === false)) {
+      teardown();
+    } else if (msg.type === "clear") {
+      clear(msg.direction);
+    } else if (msg.type === "turnComplete") {
+      finalize(msg.direction);
+    } else if (msg.type === "transcript") {
+      updateLine(msg.direction, msg.text, !msg.finished);
+      if (msg.finished) openLines.delete(msg.direction);
+    }
+  }
+  chrome.runtime.onMessage.addListener(onMessage);
+  // Live and reachable. The handle, rather than a bare `true`, is what lets the
+  // next injection take this instance's place cleanly.
+  window[MARK] = { teardown };
+})();
