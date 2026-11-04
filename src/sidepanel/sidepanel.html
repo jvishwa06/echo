@@ -76,6 +76,16 @@
           <path class="slash" d="M3 3l18 18" />
         </svg>
       </button>
+      <!-- Minutes of meeting from the transcript so far, saved as Markdown to
+           Downloads. Not a run control: it only reads the transcript, so it
+           works from any tab and after Stop. -->
+      <button
+        id="minutes"
+        class="ghost"
+        type="button"
+        data-i18n="panelMinutes"
+        data-i18n-title="panelMinutesTitle"
+      ></button>
       <button
         id="openOptions"
         class="ghost"
@@ -113,6 +123,8 @@
     </p>
 
     <p class="note warn" id="captionNote" hidden></p>
+
+    <p class="note" id="minutesNote" hidden></p>
 
     <!-- Everything under the controls scrolls as one. -->
     <div id="below">

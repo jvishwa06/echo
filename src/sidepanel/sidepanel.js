@@ -14,6 +14,7 @@ import { formatDuration } from "../lib/usage.js";
 import { SIMUL_LANGUAGES, SIMUL_POPULAR_LANGUAGES, simulLanguageCode } from "../lib/languages.js";
 import { localize, setMessage, t } from "../lib/i18n.js";
 import { currentTheme, initTheme, toggleTheme } from "../lib/theme.js";
+import { generateMinutes, minutesFilename } from "../lib/minutes.js";
 
 const SIMUL = { langs: SIMUL_LANGUAGES, popular: SIMUL_POPULAR_LANGUAGES };
 
@@ -53,6 +54,9 @@ const openLines = new Map();
 let myTabId = null;
 let runTabId = null;
 let runTabTitle = "";
+// Set while minutes are being written, so the button cannot start a second
+// request on top of the first.
+let makingMinutes = false;
 init();
 
 async function init() {
@@ -173,6 +177,7 @@ function bind() {
   el("toggle").addEventListener("click", onToggle);
   el("soundMute").addEventListener("click", () => update({ soundMuted: !settings.soundMuted }));
   el("openOptions").addEventListener("click", openOptions);
+  el("minutes").addEventListener("click", onMinutes);
   el("themeToggle").addEventListener("click", async () => {
     await toggleTheme();
     renderThemeToggle();
@@ -247,6 +252,8 @@ function render() {
   // Stop is the exception to the paragraph above: it is the whole reason the
   // icon opens this panel on a tab that was never translating.
   el("toggle").disabled = elsewhere ? false : !hasKey;
+  el("minutes").disabled = !hasKey || makingMinutes;
+  el("minutes").textContent = t(makingMinutes ? "panelMinutesBusy" : "panelMinutes");
   if (!running) setStatus("disconnected", t("statusIdle"));
 }
 
@@ -343,6 +350,7 @@ async function onToggle() {
       // then, already hidden.
       el("transcript").innerHTML = "";
       el("captionNote").hidden = true;
+      el("minutesNote").hidden = true;
       // Cleared on the way in, not on the way out: what the last run cost is
       // worth reading after Stop, and this run has not spent anything yet.
       usage = null;
@@ -368,6 +376,59 @@ async function onToggle() {
   }
   render();
   el("toggle").disabled = false;
+}
+
+/**
+ * Minutes of meeting from everything transcribed since Start, saved to
+ * Downloads as Markdown.
+ *
+ * The transcript is asked of the service worker rather than read off this
+ * panel: the panel only redraws the last few hundred lines when it is rebuilt,
+ * and the minutes have to reach back to the start of the meeting. While a run
+ * is going this is the transcript up to the moment of the click; after Stop it
+ * is the whole of the run that ended.
+ */
+async function onMinutes() {
+  if (makingMinutes) return;
+  makingMinutes = true;
+  clearError();
+  el("minutesNote").hidden = true;
+  render();
+  try {
+    const { lines = [] } = await send({ type: "transcript" }, true);
+    if (!lines.length) throw new Error(t("panelMinutesEmpty"));
+    const now = new Date();
+    const markdown = await generateMinutes(settings.apiKey.trim(), lines, {
+      language: SIMUL_LANGUAGES[settings.tabTarget] || settings.tabTarget,
+      date: now.toLocaleString(),
+      source: runTabTitle,
+      noText: t("panelMinutesNoText"),
+    });
+    const filename = minutesFilename(now);
+    await saveToDownloads(markdown, filename);
+    setMessage(el("minutesNote"), "panelMinutesSaved", [filename]);
+    el("minutesNote").hidden = false;
+  } catch (err) {
+    showError(t("panelMinutesFailed", [err.message]));
+  } finally {
+    makingMinutes = false;
+    render();
+  }
+}
+
+/**
+ * Straight into the Downloads folder, without a Save As dialog: the button
+ * says where the file goes, and a dialog would make that a question.
+ */
+async function saveToDownloads(text, filename) {
+  const url = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
+  try {
+    await chrome.downloads.download({ url, filename, saveAs: false, conflictAction: "uniquify" });
+  } finally {
+    // The download has its own copy once it has started; a minute is plenty
+    // for it to have done so.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  }
 }
 
 async function restart() {

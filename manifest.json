@@ -11,7 +11,8 @@
     "sidePanel",
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "downloads"
   ],
   "host_permissions": [
     "https://generativelanguage.googleapis.com/*"

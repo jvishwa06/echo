@@ -10,9 +10,14 @@ The extension connects only to Google's Gemini API, at `generativelanguage.googl
 | Data | Sent to | Stored |
 | --- | --- | --- |
 | **Tab audio** | Gemini Live API, only while a session is running | Never. Streamed, then discarded. |
-| **Transcripts** | Nowhere; received from Gemini | In the side panel until it closes |
+| **Transcripts** | Received from Gemini; sent back to the Gemini API only when you press **Minutes** | In memory until the browser closes |
+| **Minutes of meeting** | Nowhere | A Markdown file in your Downloads folder, only when you press **Minutes** |
 | **API key** | Gemini API, to authenticate | `chrome.storage.local` on your device |
 | **Settings** | Nowhere | `chrome.storage.local` on your device |
+
+When you press **Minutes**, Echo sends the transcript of the current or last session to the
+Gemini API (`generateContent`) and saves the minutes it returns to your Downloads folder.
+Nothing is sent unless you press it.
 
 Echo also uses your key to fetch the list of models it can access. It does this on the Options
 page and once before each session, to check that the key works.
@@ -33,7 +38,7 @@ if that matters to you.
 
 - It does not include analytics, telemetry, crash reporting or ads.
 - It does not sell or transfer your data.
-- It does not use your data for anything except the translation you asked for.
+- It does not use your data for anything except the translation and minutes you asked for.
 - It does not use your data for credit or lending decisions.
 - It does not read page content. It only adds subtitles and a 💬 to the tab's title.
 

@@ -147,6 +147,8 @@ async function handle(msg, sender) {
       return stop();
     case "getState":
       return getState();
+    case "transcript":
+      return transcript();
     case "caption":
       // Relayed from the offscreen document, which has no tab of its own.
       await sendToCaptions(msg.payload);
@@ -212,6 +214,22 @@ async function getState() {
     lines,
     usage,
   };
+}
+
+/**
+ * The whole transcript, from Start until now, for the minutes of meeting.
+ *
+ * From the offscreen document while a run is going; after Stop, the copy
+ * `stop()` kept in session storage. The panel's own history is capped at a few
+ * hundred lines and would cut off the start of a long meeting.
+ */
+async function transcript() {
+  if (await hasOffscreen()) {
+    const reply = await toOffscreen({ type: "transcript" }).catch(() => null);
+    if (reply?.lines) return { lines: reply.lines, live: true };
+  }
+  const { lastTranscript = null } = await chrome.storage.session.get("lastTranscript");
+  return { lines: lastTranscript || [], live: false };
 }
 
 /**
@@ -322,6 +340,7 @@ async function start(panelTabId = null) {
     runTabTitle: tab.title || "",
     captionStatus: null,
     lastError: null,
+    lastTranscript: null,
   });
   announceRun(tabId, tab.title || "");
   await markTab();
@@ -497,6 +516,13 @@ async function toOffscreen(message, attempts = 20) {
 
 async function stop() {
   if (await hasOffscreen()) {
+    // Kept past the end of the run, so minutes can still be made after Stop:
+    // the offscreen document is the only place the whole transcript lives, and
+    // it is about to be closed.
+    const reply = await toOffscreen({ type: "transcript" }).catch(() => null);
+    if (reply?.lines?.length) {
+      await chrome.storage.session.set({ lastTranscript: reply.lines }).catch(() => {});
+    }
     await toOffscreen({ type: "stop" }).catch(() => {});
     await chrome.offscreen.closeDocument();
   }

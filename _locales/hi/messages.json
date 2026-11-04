@@ -33,6 +33,15 @@
   "panelStart": { "message": "Start" },
   "panelStop": { "message": "Stop" },
   "panelOptions": { "message": "विकल्प" },
+  "panelMinutes": { "message": "मिनट्स" },
+  "panelMinutesBusy": { "message": "बन रहे हैं…" },
+  "panelMinutesTitle": {
+    "message": "अब तक के ट्रांसक्रिप्ट से मीटिंग के मिनट्स बनाएँ और उन्हें Markdown फ़ाइल के रूप में Downloads में सेव करें"
+  },
+  "panelMinutesSaved": { "message": "मिनट्स Downloads में <b>{1}</b> के रूप में सेव हो गए।" },
+  "panelMinutesEmpty": { "message": "अभी तक कुछ भी ट्रांसक्राइब नहीं हुआ है। पहले किसी मीटिंग पर Echo शुरू करें।" },
+  "panelMinutesNoText": { "message": "Gemini ने कोई टेक्स्ट नहीं लौटाया।" },
+  "panelMinutesFailed": { "message": "मिनट्स नहीं बन सके: {1}" },
 
   "panelUsageFree": {
     "message": "अब तक <b>{1}</b>, कुल उपयोग <b>{2}</b>। मुफ़्त प्लान में इसका कोई शुल्क नहीं लगता।"

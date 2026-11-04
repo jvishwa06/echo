@@ -19,6 +19,8 @@ no server.
 - The original audio is turned down while the translation plays, by an amount you set.
 - On-page subtitles that keep working in fullscreen.
 - A live transcript and audio usage in the side panel.
+- **Minutes**: one click turns the transcript so far into minutes of meeting (summary, decisions,
+  action items), saved as a Markdown file in your Downloads folder.
 - Light and dark themes; English and Hindi interface.
 
 Closing the tab or pressing **Stop** ends the session.

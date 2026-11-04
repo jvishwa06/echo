@@ -6,10 +6,11 @@
  * share one with the side panel — so everything lives here, including the API
  * key.
  *
- * The key is the user's own, on their own machine, and is sent to exactly one
- * place: the `key` query parameter of the Gemini Live WebSocket. Nothing in this
- * extension transmits it anywhere else, and there is no server to transmit it
- * to.
+ * The key is the user's own, on their own machine, and is sent only to Google's
+ * Gemini API: the `key` query parameter of the Live WebSocket, and the
+ * `x-goog-api-key` header of the minutes request (`lib/minutes.js`). Nothing in
+ * this extension transmits it anywhere else, and there is no server to transmit
+ * it to.
  */
 
 import { t } from "./i18n.js";

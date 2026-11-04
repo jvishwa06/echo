@@ -42,6 +42,24 @@
   "panelStart": { "message": "Start" },
   "panelStop": { "message": "Stop" },
   "panelOptions": { "message": "Options" },
+  "panelMinutes": {
+    "message": "Minutes",
+    "description": "Button: create the minutes of meeting (MoM) from the transcript so far."
+  },
+  "panelMinutesBusy": { "message": "Creating…" },
+  "panelMinutesTitle": {
+    "message": "Create minutes of meeting from the transcript so far and save them to Downloads as a Markdown file"
+  },
+  "panelMinutesSaved": {
+    "message": "Minutes saved to Downloads as <b>{1}</b>.",
+    "description": "{1} is the file name."
+  },
+  "panelMinutesEmpty": { "message": "Nothing has been transcribed yet. Start Echo on a meeting first." },
+  "panelMinutesNoText": { "message": "Gemini returned no text." },
+  "panelMinutesFailed": {
+    "message": "Could not create the minutes: {1}",
+    "description": "{1} is the reason, usually an error message from the Gemini API."
+  },
 
   "panelUsageFree": {
     "message": "<b>{1}</b> so far, <b>{2}</b> of total usage. Google charges nothing for this on the free plan.",

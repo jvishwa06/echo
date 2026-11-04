@@ -44,6 +44,12 @@ const SIMUL_IDLE_MS = 2000;
 // continuous subtitling cannot grow this document without bound.
 const HISTORY_LIMIT = 200;
 
+// The whole transcript of the run, for the minutes of meeting (see
+// `lib/minutes.js`). Unlike the panel history it has to reach back to Start, so
+// it is capped only as a guard against a run left going for days: text is
+// cheap, and this is many hours of continuous speech.
+const RECORD_LIMIT = 20000;
+
 // How often the running token tally is pushed to the panel. Usage frames can
 // arrive with every turn, and a figure that moves faster than it can be read is
 // a distraction rather than information — a second is slow enough to read and
@@ -72,6 +78,9 @@ const state = {
   // both the side panel and the service worker — see `noteLine`.
   lines: [],
   openLines: new Map(),
+  // Every line since Start, in order — the same objects as `lines`, so a
+  // streamed increment updates both. Read by `record()`.
+  record: [],
   // The trailing-edge timer behind USAGE_POST_MS. The tally itself lives on the
   // session's accumulator, which is where the events arrive.
   usageTimer: null,
@@ -111,6 +120,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       fail(err);
     }
   } else if (msg.type === "history") done({ lines: history(), usage: usageSnapshot() });
+  else if (msg.type === "transcript") done({ lines: record() });
   else return false;
   return true;
 });
@@ -509,6 +519,8 @@ function noteLine(payload) {
     line = { direction, side, text };
     state.lines.push(line);
     if (state.lines.length > HISTORY_LIMIT) state.lines.shift();
+    state.record.push(line);
+    if (state.record.length > RECORD_LIMIT) state.record.shift();
     state.openLines.set(key, line);
   }
   line.text = text;
@@ -525,6 +537,13 @@ function noteLine(payload) {
 function history() {
   const open = new Set(state.openLines.values());
   return state.lines.map((line) => ({ ...line, open: open.has(line) }));
+}
+
+/** Every line since Start, oldest first, as `{ side, text }`. */
+function record() {
+  return state.record
+    .filter((line) => line.text && line.text.trim())
+    .map(({ side, text }) => ({ side, text }));
 }
 
 /**
